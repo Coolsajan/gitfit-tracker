@@ -6,3 +6,5 @@ pandas
 matplotlib
 docker
 fastapi
+pymongo
+PyYAML
