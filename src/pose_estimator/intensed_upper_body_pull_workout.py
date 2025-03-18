@@ -4,7 +4,7 @@ from src.pose_estimator.warm_up import WarmUp
 import mediapipe as mp 
 import time,datetime
 
-class UpperBodyPushWorkout:
+class UpperBodyPullWorkout:
     def __init__(self):
         self.mp_pose=mp.solutions.pose
         self.step="REST"
@@ -25,8 +25,8 @@ class UpperBodyPushWorkout:
     def get_landmarks(self,landmarks,pose_part):
         """ This method retruns the landmarks cordinates."""
         return [
-            landmarks[self.mp_pose.PoseLandmark[pose_part].value.x],
-                landmarks[self.mp_pose.PoseLandmark[pose_part].value.y]
+            landmarks[self.mp_pose.PoseLandmark[pose_part].value].x,
+                landmarks[self.mp_pose.PoseLandmark[pose_part].value].y
                 ]
     
     def warm_up(self,landmarks):

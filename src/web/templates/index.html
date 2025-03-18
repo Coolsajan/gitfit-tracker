@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section: Contains the title and time display -->
+        <header>
+            <h1>Exercise Tracker</h1>
+            <div class="time-display">
+                <span id="current-time">00:00:00</span>
+            </div>
+        </header>
+        
+        <!-- Main Content: Two-column layout for video and metrics -->
+        <div class="main-content">
+            <!-- Left Column: Contains video feed and workout summary -->
+            <div class="left-column">
+                <!-- Video Container: Displays OpenCV/MediaPipe feed -->
+                <div class="video-container">
+                    <!-- Replace this img with your actual video feed -->
+                    <img id="video-feed" src="{{ url_for('video_feed') }}" />
+                    <!-- Overlay shows current exercise name and status -->
+                    <div class="video-overlay">
+                        <span id="exercise-name">Squats</span> •
+                        <span id="exercise-status">In Progress</span>
+                    </div>
+                </div>
+                
+                <!-- Workout Controls: Buttons to control the tracking -->
+                <div class="workout-controls">
+                    <button id="start-btn">Start Workout</button>
+                    <button id="pause-btn">Pause</button>
+                    <button id="stop-btn" class="stop">Stop</button>
+                </div>
+                
+                <!-- Workout Summary: Overall stats for the session -->
+                <div class="summary-section">
+                    <h3>Workout Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Time</span>
+                            <span class="summary-value" id="total-time">15:30</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Calories Burned</span>
+                            <span class="summary-value" id="calories">247</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Total Reps</span>
+                            <span class="summary-value" id="total-reps">42</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Sets Completed</span>
+                            <span class="summary-value" id="sets-completed">3/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Contains real-time metrics and workout plan -->
+            <div class="metrics-container">
+                <!-- Current Rep Metric Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Current Rep</span>
+                        <span class="metric-value" id="current-rep">8/12</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 66%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Current Set Metric Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Current Set</span>
+                        <span class="metric-value" id="current-set">2/4</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 50%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Form Score Metric Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Form Score</span>
+                        <span class="metric-value" id="form-score">92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Workout Plan: Lists all exercises in the current workout -->
+                <div class="workout-plan">
+                    <h3>Workout Plan</h3>
+                    <!-- Completed Exercise -->
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-name">Jumping Jacks</div>
+                            <div class="workout-details">Completed</div>
+                        </div>
+                        <div>3 × 15</div>
+                    </div>
+                    <!-- Current Exercise (highlighted) -->
+                    <div class="workout-item current">
+                        <div>
+                            <div class="workout-name">Squs</div>
+                            <div class="workout-details">In progress</div>
+                        </div>
+                        <div>4 × 12</div>
+                    </div>
+                    <!-- Upcoming Exercises -->
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-name">Push-ups</div>
+                            <div class="workout-details">Next</div>
+                        </div>
+                        <div>3 × 10</div>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-name">Lunges</div>
+                            <div class="workout-details">Upcoming</div>
+                        </div>
+                        <div>3 × 12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script>
+        const socket = io("http://127.0.0.1:5000");
+
+        socket.on("connect", () => console.log("✅ Connected to WebSocket!"));
+        socket.on("disconnect", () => console.warn("⚠️ Disconnected from WebSocket!"));
+        socket.on("update", (data) => console.log("📩 Received update:", data));
+        socket.on("update_workout",function(data){
+            
+            document.getElementById("current-rep").textContent = data.current_rep;
+            console.log({ current_rep: data.current_rep });
+            document.getElementById("current-set").textContent = data.current_set;
+            document.getElementById("total-reps").textContent = data.total_reps;
+            document.getElementById("sets-completed").textContent = data.current_set;
+            document.getElementById("total-time").textContent = data.total_time;
+            document.getElementById("current-time").textContent = data.current_time;
+            document.getElementById("exercise-name").textContent = data.workout_type;
+        });
+    </script>
+    <!-- JavaScript would go here or be linked externally -->
+</body>
+</html>

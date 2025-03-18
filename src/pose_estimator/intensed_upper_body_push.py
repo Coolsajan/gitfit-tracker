@@ -7,29 +7,30 @@ import time,datetime
 class UpperBodyPush:
     def __init__(self):
         self.mp_pose=mp.solutions.pose
+        self.step="Starting..."
         self.counter=0
-        self.step="REST"
-        self.workout_index=0
+        self.current_workout_index=0
         self.start_time=time.time()
-        self.upper_body_push={"Warm-Up":self.warmup,
-                              "Standard Push-Up":self.Standard_Pushup,
-                              "Diamond Push-Up":self.Diamond_PushUp,
-                              "Pike Push-Up":self.Pike_pushUp,
+        self.set=1
+        self.next_workout=None
+        self.timeout_counter=0
+        self.rest_start_time=None
+        self.rest_time=0
+        self.upper_body_push={
+                              "Standard PushUp":self.Standard_Pushup,
+                              "Diamond PushUp":self.Diamond_PushUp,
+                              "Pike PushUp":self.Pike_pushUp,
                               "Dips":self.Dips}
 
     def get_landmarks(self,landmarks,pose_part):
         """ This method retruns the landmarks cordinates."""
         return [
-            landmarks[self.mp_pose.PoseLandmark[pose_part].value.x],
-                landmarks[self.mp_pose.PoseLandmark[pose_part].value.y]
+            landmarks[self.mp_pose.PoseLandmark[pose_part].value].x,
+                landmarks[self.mp_pose.PoseLandmark[pose_part].value].y
                 ]
     
     def warmup(self,landmarks):
-        """This method will track and record your workout.."""
-        self.counter , self.step = WarmUp.double_arm_stretch(landmarks=landmarks)
-
-        return self.counter,self.step
-    
+         pass
     def Standard_Pushup(self,landmarks):
         """This will detect and record the pushup.."""
         #collecting landmarks
@@ -89,6 +90,7 @@ class UpperBodyPush:
             self.counter += 1
 
         return self.step , self.counter 
+    
     def Dips(self,landmarks):
         """This method will detect and record the Dips.. """
          #collecting landmarks
@@ -189,6 +191,3 @@ class UpperBodyPush:
             "Next Workout": self.next_workout,
             "Set": self.set
         }, workout_type, self.step, self.counter, end_time, self.next_workout,self.set
-
-
-        

@@ -26,8 +26,8 @@ class LegWorkout:
     def get_landmarks(self,landmarks,pose_part):
         """ This method retruns the landmarks cordinates."""
         return [
-            landmarks[self.mp_pose.PoseLandmark[pose_part].value.x],
-                landmarks[self.mp_pose.PoseLandmark[pose_part].value.y]
+            landmarks[self.mp_pose.PoseLandmark[pose_part].value].x,
+                landmarks[self.mp_pose.PoseLandmark[pose_part].value].y
                 ]
     
     def warm_up(self,landmarks):
@@ -240,13 +240,6 @@ class LegWorkout:
                     self.counter=0
                     self.current_workout_index+=1
 
-        
+        workout_list=list(self.lower_body_workout.keys())
 
-        return {
-            "Workout Type": workout_type,
-            "Repetitions Completed": self.counter,
-            "Time Elapsed (seconds)": end_time,
-            "Current Step": step,
-            "Next Workout": self.next_workout,
-            "Set": self.set
-        }, workout_type, self.step, self.counter, end_time, self.next_workout,self.set
+        return workout_type, self.counter , reps_required ,self.set,total_sets,end_time ,workout_list

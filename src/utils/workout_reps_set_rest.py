@@ -34,3 +34,5 @@ fullbody_moderate_intensity={"Standard PushUp":{"reps":12,"set":3,"rest_time":45
                             "Forward Lunge":{"reps":12,"set":3,"rest_time":45}}
 
 
+
+
