@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    scrip
+</head>
+<body>
+    <div class="particles"></div>
+    
+    <div class="container">
+        <h1>Welcome</h1>
+        <div class="input-box">
+            <input type="text" placeholder="Enter your name">
+        </div>
+        <button class="btn">Start Your Fitness Tracking.</button>
+    </div>
+
+    <script>
+        // Simple particles animation
+        function createParticles() {
+            const particles = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${Math.random() * 5}px;
+                    height: ${Math.random() * 5}px;
+                    background: rgba(255, 255, 255, ${Math.random() * 0.5});
+                    top: ${Math.random() * 100}%;
+                    left: ${Math.random() * 100}%;
+                    animation: float ${5 + Math.random() * 10}s infinite linear;
+                `;
+                particles.appendChild(particle);
+            }
+        }
+
+        // Add keyframes for animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                from { transform: translateY(0) rotate(0deg); }
+                to { transform: translateY(-100vh) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        createParticles();
+    </script>
+</body>
+</html>

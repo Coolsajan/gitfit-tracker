@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Tracker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>     
+    </body>
+    
+    </html><link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="container">
         <!-- Header Section: Contains the title and time display -->
         <header>
-            <h1>Exercise Tracker</h1>
+            <h1>Git Fit Exercise Tracker</h1>
             <div class="time-display">
                 <span id="current-time">00:00:00</span>
             </div>
@@ -32,12 +41,7 @@
                     </div>
                 </div>
                 
-                <!-- Workout Controls: Buttons to control the tracking -->
-                <div class="workout-controls">
-                    <button id="start-btn">Start Workout</button>
-                    <button id="pause-btn">Pause</button>
-                    <button id="stop-btn" class="stop">Stop</button>
-                </div>
+               
                 
                 <!-- Workout Summary: Overall stats for the session -->
                 <div class="summary-section">
@@ -48,8 +52,8 @@
                             <span class="summary-value" id="total-time">15:30</span>
                         </div>
                         <div class="summary-item">
-                            <span class="summary-label">Calories Burned</span>
-                            <span class="summary-value" id="calories">247</span>
+                            <span class="summary-label">Rest Time</span>
+                            <span class="summary-value" id="rest-time">247</span>
                         </div>
                         <div class="summary-item">
                             <span class="summary-label">Total Reps</span>
@@ -94,7 +98,7 @@
                         <span class="metric-value" id="form-score">92%</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 92%;"></div>
+                        <div class="progress-fill" style="width: 20%;"></div>
                     </div>
                 </div>
                 
@@ -154,7 +158,16 @@
             document.getElementById("sets-completed").textContent = data.current_set;
             document.getElementById("total-time").textContent = data.total_time;
             document.getElementById("current-time").textContent = data.current_time;
+            document.getElementById("rest-time").textContent = data.workout_list;
             document.getElementById("exercise-name").textContent = data.workout_type;
+            
+
+            let repProgress = (data.current_rep / data.total_reps) * 100;
+            let setProgress = (data.current_set / data.total_sets) * 100;
+            
+
+            document.querySelector("#current-rep + .progress-bar .progress-fill").style.width = `${repProgress}%`;
+            document.querySelector("#current-set + .progress-bar .progress-fill").style.width = `${setProgress}%`;
         });
     </script>
     <!-- JavaScript would go here or be linked externally -->

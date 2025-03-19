@@ -1,4 +1,4 @@
-from src.utils.common_utils import calculate_angle,calculate_eq_distance,mind_point_finder 
+from src.utils.common_utils import calculate_angle,calculate_eq_distance,mind_point_finder ,convert_seconds,get_workout_plan
 from src.utils.workout_reps_set_rest import fullbody_moderate_intensity
 from src.pose_estimator.warm_up import WarmUp
 import mediapipe as mp 
@@ -11,6 +11,8 @@ class FullBodyWorkout:
         self.counter=0
         self.current_workout_index=0
         self.start_time=time.time()
+        self.updates=None
+        self.rest_end_time=0.0
         self.set=1
         self.next_workout=None
         self.timeout_counter=0
@@ -204,11 +206,14 @@ class FullBodyWorkout:
         """Initate the full body workout function.."""
         workouts=list(self.full_body_workout.items())
         workout_type,workout_function =workouts[self.current_workout_index]
+        self.updates=workout_type
 
         workout_data = fullbody_moderate_intensity.get(workout_type, {})
         reps_required = workout_data.get("reps", 0)
         total_sets = workout_data.get("set", 1)
         rest_time = workout_data.get("rest_time", 0)
+
+        workout_plan=get_workout_plan(workouts,fullbody_moderate_intensity)
 
         step,counter=workout_function(landmarks)
         end_time=time.time()-self.start_time
@@ -216,18 +221,20 @@ class FullBodyWorkout:
         
 
         if (counter == reps_required and self.step !="POST SET WORKOUT REST") or self._skip_workout(landmarks=landmarks) is True:
-            self.step="POST SET WORKOUT REST"
+            self.step="REST"
+            self.updates=self.step
             if self.rest_start_time is None:
                 self.rest_start_time=time.time()           
             
         if self.step == "POST SET WORKOUT REST" :
-            self.end_time=time.time()-self.rest_start_time
+            self.end_time=self.rest_start_time -time.time()
 
             if self.end_time >= (rest_time-5):
                 self.step="WORKOUT BEGINS SHORTLY...."
 
             if self.end_time >= rest_time :
                 print("rest complete moving to next set..")
+                self.updates=workout_type
                 self.set+=1
                 self.counter=0
                 self.step="WORKOUT BEGINS"
@@ -236,29 +243,28 @@ class FullBodyWorkout:
             self.next_workout,_=workouts[(self.current_workout_index + 1) % len(workouts)]    
 
         if ((counter == reps_required) and (self.set == total_sets) and (self.step!="POST WORKOUT REST")) or ((self.set == total_sets) and(self._skip_workout(landmarks=landmarks)) and (self.step!="POST WORKOUT REST")):
-            self.step="POST WORKOUT REST"
-            self.rest_start_time=time.time()
+            self.step="REST"
+            self.updates=self.step
+            self.start_time=time.time()
 
             if self.step=='POST WORKOUT REST':
                 self.end_time=time.time()-self.rest_start_time
                 print("rest time started..")
 
                 if self.end_time >= rest_time:
+                    self.updates=workout_type
                     self.start_time=time.time()
                     self.set=1
                     self.counter=0
                     self.current_workout_index+=1
 
-        return {
-            "Workout Type": workout_type,
-            "Repetitions Completed": self.counter,
-            "Time Elapsed (seconds)": end_time,
-            "Current Step": step,
-            "Next Workout": self.next_workout,
-            "Set": self.set
-        }, workout_type, self.step, self.counter, end_time, self.next_workout,self.set
 
+        #self.rest_end_time=round(self.rest_end_time)
+        end_time=round(end_time)                
+        end_time=convert_seconds(end_time)
 
+        return (self.updates, self.counter , reps_required ,self.set,total_sets,end_time,self.rest_end_time ,self.step ,str(workout_plan))
+                
 
             
 

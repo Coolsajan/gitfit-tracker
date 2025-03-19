@@ -25,3 +25,25 @@ def mind_point_finder(a,b):
         for i in range(0,len(a)):
             result[i]=(a[i]+b[i])/2
     return list(result.values()) 
+
+def convert_seconds(seconds):
+    minutes = seconds // 60
+    remaining_seconds = seconds % 60
+    return f"{minutes}:{remaining_seconds}"
+
+
+
+def get_workout_plan(workouts,workout_data):
+    global workout_plan
+    workout_plan=[]
+    for i in range(len(workouts)):
+        name,_=workouts[i]
+        data=workout_data.get(name,{})
+        reps= data.get("reps", 0)
+        sets = data.get("set", 1)
+
+        plan={"name":name,"set":sets,"reps":reps,"status":"upcoming"}
+
+        workout_plan.append(plan)
+
+    return str(workout_plan)

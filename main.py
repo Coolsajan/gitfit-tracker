@@ -5,6 +5,7 @@ from src.pose_estimator.intensed_leg_workout import LegWorkout
 
 from config import Config
 from datetime import datetime,time 
+import ast
 import cv2 ,os
 from flask import Flask, render_template, Response 
 from flask_socketio import SocketIO
@@ -37,27 +38,34 @@ def generate_frames():
 
         try:
             landmarks = results.pose_landmarks.landmark
-            workout_type, counter, reps_required, set, total_sets, end_time, workout_list = (
+            """workout_type, counter, reps_required, set, total_sets, end_time, workout_list, step ,workoutplan = (
                 workout_function.initiate_workout(landmarks=landmarks)
-            )
+            )"""
+            output = workout_function.initiate_workout(landmarks=landmarks)
+            print(f"initiate_workout output: {output}")  # Debugging
+
+            workout_type, counter, reps_required, set, total_sets, end_time, workout_list, step ,workoutplan = output
 
             # Get current time
             current_time = datetime.now().strftime('%H:%M:%S')
 
-            if prev_set != set or prev_counter != counter:
-                print(f"Emitting update: Counter={counter}, Set={set}")  # Debug print
-                workout_data = {
-                    "workout_type": workout_type,
-                    "current_rep": f"{counter}/{reps_required}",
-                    "total_reps": reps_required,
-                    "total_time": end_time,
-                    "total_set": total_sets,
-                    "current_set": f"{set}/{total_sets}",
-                    "current_time": current_time
-                }
-                socketio.emit("update_workout", workout_data)
+            
+            print(f"Emitting update: Counter={counter}, Set={set}")  # Debug print
+            workout_data = {
+                "workout_type": workout_type,
+                "current_rep": f"{counter}/{reps_required}",
+                "total_reps": reps_required,
+                "total_time": end_time,
+                "total_set": total_sets,
+                "current_set": f"{set}/{total_sets}",
+                "current_time": current_time,
+                "rest_time":workout_list
+                
+            }
+            socketio.emit("update_workout", workout_data)
+            print(ast.literal_eval(workoutplan))
 
-                prev_counter, prev_set = counter, set
+            prev_counter, prev_set = counter, set
 
                 
             
@@ -80,4 +88,4 @@ def video_feed():
 
 if __name__ == "__main__":
     print("Starting Exercise Tracker UI...")
-    socketio.run(app,debug=True,allow_unsafe_werkzeug=True)
+    socketio.run(app,debug=True)
