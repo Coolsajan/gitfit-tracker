@@ -1,6 +1,8 @@
-import math
+
+import math ,datetime
 import numpy as np
 import yaml
+
 
 
 def calculate_angle(a,b,c):
@@ -29,21 +31,33 @@ def mind_point_finder(a,b):
 def convert_seconds(seconds):
     minutes = seconds // 60
     remaining_seconds = seconds % 60
-    return f"{minutes}:{remaining_seconds}"
+    return (f"{minutes}:{remaining_seconds}")
 
 
 
-def get_workout_plan(workouts,workout_data):
-    global workout_plan
-    workout_plan=[]
-    for i in range(len(workouts)):
-        name,_=workouts[i]
-        data=workout_data.get(name,{})
-        reps= data.get("reps", 0)
-        sets = data.get("set", 1)
+def get_workout_plans(workouts, workout_data, current_index):
+    workout_plan = []
+    names = [name for name, _ in workouts]  
+    for i, (name, _) in enumerate(workouts):
+        data = workout_data.get(name, {})
+        reps = data.get("reps", 0)
+        sets = data.get("sets", 1)  
 
-        plan={"name":name,"set":sets,"reps":reps,"status":"upcoming"}
+        if i < current_index:
+            status = "completed"
+        elif i == current_index:
+            status = "in progress"  
+        elif i == current_index + 1:
+            status = "next workout"
+        else:
+            status = "upcoming"
 
-        workout_plan.append(plan)
+        workout_plan.append({"name": name, "sets": sets, "reps": reps, "status": status})
 
-    return str(workout_plan)
+    return str(workout_plan)  
+
+
+
+
+
+
