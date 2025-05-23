@@ -3,8 +3,6 @@ import mediapipe as mp
 from src.constant import MIN_DETECTION_CONFIDENCE,MIN_TRACKING_CONFIDECNE
 
 
-from src.logger import logging
-
 class PoseDetector:
     def __init__(self,min_detection_confidence=MIN_DETECTION_CONFIDENCE,
                  min_tracking_confidence=MIN_TRACKING_CONFIDECNE):
@@ -14,7 +12,7 @@ class PoseDetector:
             min_tracking_confidence=min_tracking_confidence
         )
         self.mp_drawing=mp.solutions.drawing_utils
-        logging.info("Initization of Mediapipe Pose detection....")
+        #logging.info("Initization of Mediapipe Pose detection....")
 
     def detect_pose(self,frame):
         """This function withh return the image ,result"""
@@ -26,7 +24,7 @@ class PoseDetector:
         image.flags.writeable=True
         image=cv2.cvtColor(image,cv2.COLOR_RGB2BGR)   #conveting RGB2BGR for display.
 
-        logging.info("Image and result from pose-dectetor achived...")
+        #logging.info("Image and result from pose-dectetor achived...")
         return image,results
 
         

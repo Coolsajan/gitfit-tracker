@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Workout Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/landingpage.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">FitTrack</div>
+        <div class="time" id="current-time">00:00:00</div>
+      </header>
+
+      <div class="main-content">
+        <div class="text-section">
+          <h1>Track Your Home Workouts</h1>
+          <p>
+            Stay motivated and reach your fitness goals by tracking every rep,
+            set and workout session. Our simple tracker helps you make
+            consistent progress from the comfort of your home.
+          </p>
+
+          <div class="form-section">
+            <div class="input-group">
+              <input
+                type="text"
+                placeholder="Enter your name..."
+                id="your-name"
+              />
+              <button id="submit-btn">START</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="animation-section">
+          <div class="workout-animation">
+            <!-- New animation: Pulse circles with dumbbell icon -->
+            <div class="pulse-container">
+              <div class="pulse pulse1"></div>
+              <div class="pulse pulse2"></div>
+              <div class="pulse pulse3"></div>
+
+              <div class="dumbbell">
+                <div class="bar"></div>
+                <div class="weight weight-left"></div>
+                <div class="weight weight-right"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+
+    <script>
+      var socket = io("http://127.0.0.1:5000"); // Connect to Flask SocketIO
+
+      // Update the time
+      function updateTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, "0");
+        const minutes = now.getMinutes().toString().padStart(2, "0");
+        const seconds = now.getSeconds().toString().padStart(2, "0");
+        document.getElementById(
+          "current-time"
+        ).textContent = `${hours}:${minutes}:${seconds}`;
+      }
+
+      setInterval(updateTime, 1000);
+      updateTime(); // Initial call
+
+      // Form submission
+      document
+        .getElementById("submit-btn")
+        .addEventListener("click", function () {
+          const personName = document.getElementById("your-name").value;
+          if (personName.trim() !== "") {
+            socket.emit("submit_workout", { name: personName });
+          } else {
+            alert("Please enter your name");
+          }
+        });
+
+      socket.on("redirect", function (data) {
+        window.location.href = data.url;
+      });
+    </script>
+  </body>
+</html>

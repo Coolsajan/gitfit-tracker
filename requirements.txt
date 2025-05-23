@@ -8,3 +8,7 @@ docker
 fastapi
 pymongo
 PyYAML
+flask
+Flask-SocketIO
+from-root
+eventlet
